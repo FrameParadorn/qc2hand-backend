@@ -18,4 +18,17 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::resource('/rate', 'RateController');
+
+Route::post("rate/{id}", 'RateController@upload');
+Route::resource('rate', 'RateController');
+
+
+Route::prefix('rate-template')->group(function() {
+
+  Route::get('{rateId}/create', 'RateTemplateController@create');
+  Route::post('{rateId}', 'RateTemplateController@store');
+  Route::post('{rateId}/item/create', 'RateTemplateController@createItem');
+
+});
+
+

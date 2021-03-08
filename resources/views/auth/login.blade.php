@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.default')
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
+    <div class="row" style="display: flex; justify-content: center; margin-top: 100px;">
+        <div class="col-md-6">
             <div class="card">
                 <div class="card-header">{{ __('Login') }}</div>
 
@@ -18,7 +18,7 @@
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
                                 @error('email')
-                                    <span class="invalid-feedback" role="alert">
+                                    <span class="invalid-feedback" role="alert" style="color: red;">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror

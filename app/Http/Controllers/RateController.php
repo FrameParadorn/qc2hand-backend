@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\ModelType;
+use Illuminate\Support\Facades\Storage;
 
 class RateController extends Controller
 {
@@ -14,73 +16,46 @@ class RateController extends Controller
     public function index()
     {
 
-      return view("rate");
+      
+      $types = ModelType::all();
+
+      $args = [
+        "types" => $types 
+      ];
+
+      return view("rate.index", $args);
 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+
+      $type = ModelType::find($id);
+
+      $args = [
+        "type" => $type
+      ];
+
+      return view("rate.show", $args);
+      
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+
+
+    public function upload(Request $req, $id) {
+
+      $uploadedFile = $req->file('file');
+      $filename = $uploadedFile->getClientOriginalName();
+
+      $path = $uploadedFile->store("public/image");
+      $path = str_replace("public", "/storage", $path);
+
+      $type = ModelType::find($id);
+      $type->image = $path;
+      $type->save();
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }
