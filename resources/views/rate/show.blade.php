@@ -10,9 +10,9 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="white-box">
-                <h3 class="box-title" style="float: left">จัดการประเภท {{ $type->name }}</h3>
+                <h3 class="box-title" style="float: left">จัดการรูปภาพตัวเลือก {{ $type->name }}</h3>
                 <div class="clearfix"></div>
                   <label class="btn btn-primary">
                     อัพโหลดรูปใหม่
@@ -22,30 +22,42 @@
                 <img src="{{ $type->image }}" style="width: 100px; margin-top: 30px;" id="image-preview">
             </div>
         </div>
-
-        <div class="col-sm-12">
+        <div class="col-sm-6">
             <div class="white-box">
-                <h3 class="box-title" style="float: left">รายการตัวเลือก {{ $type->name }}</h3>
-                <a href="/rate-template/{{ $type->id }}/create">
-                  <button class="btn btn-danger btn-sm" style="float: right">Create</button>
+                <h3 class="box-title" style="float: left">จัดการตัวเลือก</h3>
+                <a href="/rate-template/{{ $type->id }}/create" style="float: right">
+                  <button class="btn btn-danger btn-sm" >สร้างรายการตัวเลือกใหม่</button>
                 </a>
                 <div class="clearfix"></div>
                 <div class="table-responsive">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Display Type</th>
+                                <th>ลำดับ</th>
+                                <th>ชื่อตัวเลือก</th>
+                                <th>ประเภทตัวเลือก</th>
                                 <th>Options</th>
                             </tr>
                         </thead>
                         <tbody>
+                          @foreach($rate AS $key => $item)
+                          <tr>
+                            <td>{{ $key + 1 }}</td>
+                            <td>{{ $item->name }}</td>
+                            <td>{{ $item->display_type }}</td>
+                            <td>
+                              <a href="/rate-template/{{ $type->id }}/edit/{{ $item->id }}">
+                                <button class="btn btn-danger btn-sm">Manage</button>
+                              </a>
+                            </td>
+                          </tr>
+                          @endforeach
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 

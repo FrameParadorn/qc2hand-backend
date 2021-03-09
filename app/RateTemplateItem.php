@@ -8,5 +8,5 @@ class RateTemplateItem extends Model
 {
   protected $table = 'rate_template_item';
 
-  protected $fillable = ['id', 'name', "price", "rate_template_id"];
+  protected $fillable = ['id', 'name', "price", "rate_template_item_id"];
 }

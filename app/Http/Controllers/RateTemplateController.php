@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\RateTemplate;
+use App\RateTemplateItem;
 
 class RateTemplateController extends Controller
 {
@@ -26,7 +27,8 @@ class RateTemplateController extends Controller
     {
 
       $args = [
-        "rateId" => $req->rateId
+        "rateId" => $req->rateId,
+        "subId" => $req->subId
       ];
 
       return view("rate-template.create", $args);
@@ -46,17 +48,20 @@ class RateTemplateController extends Controller
         $rateId = $req->rateId;
         $name = $req->name;
         $typeInput = $req->type;
-        $rateTemplateItemId = empty($req->rateTemplateItemId) ? 0 : $req->rateTemplateItemId;
-
+        $rateTemplateItemId = empty($req->rateTemplateItemId) ? "0" : $req->rateTemplateItemId;
         
         $rateTemplate = new RateTemplate;
         $rateTemplate->name = $name;
         $rateTemplate->display_type = $typeInput;
         $rateTemplate->model_type_id = $rateId;
-        $ratetemplate->rate_template_item_id = $rateTemplateItemId;
+
+        if(!empty($req->subId)) {
+          $rateTemplate->rate_template_item_id = $req->subId;
+        }
+
         $rateTemplate->save();
         
-        return back()->with('message', 'Create Successfully');
+        return redirect("/rate-template/$rateId/edit/" . $rateTemplate->id);
         
       }catch(Exception $e) {
         return back()->with('message', 'Create Fails');
@@ -65,21 +70,20 @@ class RateTemplateController extends Controller
 
 
 
-    public function createItem(Request $req)
+    public function createItem(Request $req, $rateId, $typeId)
     {
         
       try {
         $name = $req->name;
         $price = $req->price;
-
         
-        $rateTemplate = new RateTemplate;
-        $rateTemplate->name = $name;
-        $rateTemplate->display_type = $typeInput;
-        $rateTemplate->model_type_id = $rateId;
-        $rateTemplate->save();
+        $rateTemplateItem = new RateTemplateItem;
+        $rateTemplateItem->name = $name;
+        $rateTemplateItem->price = $price;
+        $rateTemplateItem->rate_template_id = $typeId;
+        $rateTemplateItem->save();
         
-        return back()->with('message', 'Create Successfully');
+        return redirect("/rate-template/$rateId/edit/$typeId");
         
       }catch(Exception $e) {
 
@@ -90,16 +94,6 @@ class RateTemplateController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
@@ -107,9 +101,20 @@ class RateTemplateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($rateId, $typeId)
     {
-        //
+
+      $type = RateTemplate::find($typeId);
+      $items = RateTemplateItem::where("rate_template_id", "=", $typeId)->get();
+
+      $args = [
+        "rateId" => $rateId,
+        "type" => $type,
+        "items" => $items
+      ];
+
+      return view("rate-template.update", $args);
+
     }
 
     /**
@@ -119,9 +124,22 @@ class RateTemplateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $req, $rateId, $typeId)
     {
-        //
+        
+      try {
+        $rateTemplate = RateTemplate::find($typeId);
+        $rateTemplate->name = $req->name;
+        $rateTemplate->display_type = $req->type;
+        $rateTemplate->save();
+
+        return back()->with('message', 'Create successfully');
+
+      }catch(Exception $e) {
+        return back()->with('message', 'Create fails');
+      }
+
+
     }
 
     /**

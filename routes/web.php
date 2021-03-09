@@ -25,9 +25,13 @@ Route::resource('rate', 'RateController');
 
 Route::prefix('rate-template')->group(function() {
 
-  Route::get('{rateId}/create', 'RateTemplateController@create');
-  Route::post('{rateId}', 'RateTemplateController@store');
-  Route::post('{rateId}/item/create', 'RateTemplateController@createItem');
+  Route::get('{rateId}/create/{typeId?}/{subId?}', 'RateTemplateController@create');
+  Route::get('{rateId}/edit/{typeId}', 'RateTemplateController@edit');
+  Route::post('{rateId}/{subId?}', 'RateTemplateController@store');
+  Route::put('{rateId}/update/{typeId}', 'RateTemplateController@update');
+
+
+  Route::post('{rateId}/type/{typeId}/item/create', 'RateTemplateController@createItem');
 
 });
 
