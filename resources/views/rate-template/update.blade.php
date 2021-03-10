@@ -73,13 +73,24 @@
                           @foreach($items AS $key => $item)
                             <tr>
                                 <td>{{ $key + 1 }}</td>
-                                <td>{{ $item->name }}</td>
-                                <td>{{ empty($item->price) ? "N/A" : $item->price }}</td>
+                                <td class="item-subtype-name">{{ $item->name }}</td>
+                                <td class="item-subtype-price">{{ empty($item->price) ? "N/A" : $item->price }}</td>
                                 <td style="width: 300px">
-                                  <button class="btn btn-warning btn-sm">แก้ไขตัวเลือกย่อย</button>
+                                  <button 
+                                    class="btn btn-warning btn-sm update-subtype-btn" 
+                                    data-id="{{ $item->id }}"
+                                  >
+                                    แก้ไข
+                                  </button>
+                                  <button 
+                                    class="btn btn-warning btn-sm delete-subtype-btn" 
+                                    data-id="{{ $item->id }}"
+                                  >
+                                   ลบ
+                                  </button>
                                   <a href="/rate-template/{{ $rateId }}/create/{{ $type->id }}/{{ $item->id }}">
                                     <button class="btn btn-danger btn-sm">
-                                      สร้างประเภทย่อย
+                                      ประเภทย่อย
                                     </button>
                                   </a>
                                 </td>
@@ -94,7 +105,7 @@
 </div>
 
 
-<div class="modal fade" id="create-subtype-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="create-subtype-modal" tabindex="-1">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <form action="/rate-template/{{ $rateId }}/type/{{ $type->id }}/item/create" method="POST">
@@ -108,11 +119,11 @@
         <div class="modal-body">
           <div class="form-group">
             <label>ชื่อ</label>
-            <input type="text" name="name" class="form-control"  placeholder="MacBook Pro" required>
+            <input type="text" id="subtype-name" name="name" class="form-control"  placeholder="MacBook Pro" required>
           </div>
           <div class="form-group">
             <label>ราคา</label>
-            <input type="text" name="price" class="form-control"  placeholder="50,000 - 65,000">
+            <input type="text" id="subtype-price" name="price" class="form-control"  placeholder="50,000 - 65,000">
           </div>
         </div>
         <div class="modal-footer">
@@ -129,7 +140,43 @@
 @section('js')
 <script>
 
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
 
+  $(".update-subtype-btn").on("click", function() {
+    let name = $(this).parent().parent().find(".item-subtype-name").text();
+    let price = $(this).parent().parent().find(".item-subtype-price").text();
+    let id = $(this).attr("data-id");
+
+    $("#subtype-name").val(name)
+    $("#subtype-price").val(price === "N/A" ? "" : price)
+    $("#create-subtype-modal .modal-title").text("แก้ไขรายการตัวเลือก")
+    $("#create-subtype-modal form").attr("action", "/rate-template/{{ $rateId }}/type/{{ $type->id }}/item/update/" + id)
+    $("#create-subtype-modal").modal("show")
+  })
+
+
+  $("#create-subtype-modal").on("hidden.bs.modal", function() {
+    $("#create-subtype-modal .modal-title").text("สร้างรายการตัวเลือกใหม่")
+    $("#create-subtype-modal form").attr("action", "/rate-template/{{ $rateId }}/type/{{ $type->id }}/item/create")
+    $("#subtype-name").val("")
+    $("#subtype-price").val("")
+  })
+
+
+  $(".delete-subtype-btn").on("click", function() {
+    let id = $(this).attr("data-id");
+    let isConfirm = confirm("Are you sure");
+    if(isConfirm) {
+        let url = "/rate-template/{{ $rateId }}/type/{{ $type->id }}/item/delete/" + id
+        $.post(url, function(data, status) {
+          location.reload();
+        })
+      }
+  })
 
 </script>
 @endsection

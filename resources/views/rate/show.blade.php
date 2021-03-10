@@ -24,37 +24,11 @@
         </div>
         <div class="col-sm-6">
             <div class="white-box">
-                <h3 class="box-title" style="float: left">จัดการตัวเลือก</h3>
-                <a href="/rate-template/{{ $type->id }}/create" style="float: right">
-                  <button class="btn btn-danger btn-sm" >สร้างรายการตัวเลือกใหม่</button>
+                <h3 class="box-title">จัดการตัวเลือก</h3>
+                <a href="/rate-template/{{ $type->id }}/create">
+                  <button class="btn btn-danger btn-sm" >ปรับแต่งรายการตัวเลือก</button>
                 </a>
                 <div class="clearfix"></div>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>ลำดับ</th>
-                                <th>ชื่อตัวเลือก</th>
-                                <th>ประเภทตัวเลือก</th>
-                                <th>Options</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                          @foreach($rate AS $key => $item)
-                          <tr>
-                            <td>{{ $key + 1 }}</td>
-                            <td>{{ $item->name }}</td>
-                            <td>{{ $item->display_type }}</td>
-                            <td>
-                              <a href="/rate-template/{{ $type->id }}/edit/{{ $item->id }}">
-                                <button class="btn btn-danger btn-sm">Manage</button>
-                              </a>
-                            </td>
-                          </tr>
-                          @endforeach
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
 

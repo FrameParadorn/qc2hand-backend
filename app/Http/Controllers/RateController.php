@@ -17,7 +17,6 @@ class RateController extends Controller
     public function index()
     {
 
-      
       $types = ModelType::all();
 
       $args = [

@@ -26,6 +26,11 @@ class RateTemplateController extends Controller
     public function create(Request $req)
     {
 
+      $rateTemplate = RateTemplate::where("rate_template_item_id", $req->subId)->first();
+      if($rateTemplate !== null) {
+        return redirect("/rate-template/" . $req->rateId. "/edit/" . $rateTemplate->id);
+      }
+
       $args = [
         "rateId" => $req->rateId,
         "subId" => $req->subId
@@ -82,18 +87,41 @@ class RateTemplateController extends Controller
         $rateTemplateItem->price = $price;
         $rateTemplateItem->rate_template_id = $typeId;
         $rateTemplateItem->save();
+        return redirect("/rate-template/$rateId/edit/$typeId");
+      }catch(Exception $e) {
+        return back()->with('message', 'Create Fails');
+      }
+    }
+
+
+
+    public function updateItem(Request $req, $rateId, $typeId, $itemId)
+    {
+      try {
+        $name = $req->name;
+        $price = $req->price;
+        
+        $rateTemplateItem = RateTemplateItem::find($itemId);
+        $rateTemplateItem->name = $name;
+        $rateTemplateItem->price = $price;
+        $rateTemplateItem->save();
         
         return redirect("/rate-template/$rateId/edit/$typeId");
         
       }catch(Exception $e) {
-
         return back()->with('message', 'Create Fails');
-
       }
-
-
     }
 
+
+
+    public function deleteItem(Request $req, $rateId, $typeId, $itemId)
+    {
+
+      $rateTemplateItem = RateTemplateItem::find($itemId);
+      $rateTemplateItem->delete();
+        
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -138,7 +166,6 @@ class RateTemplateController extends Controller
       }catch(Exception $e) {
         return back()->with('message', 'Create fails');
       }
-
 
     }
 

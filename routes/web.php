@@ -32,6 +32,8 @@ Route::prefix('rate-template')->group(function() {
 
 
   Route::post('{rateId}/type/{typeId}/item/create', 'RateTemplateController@createItem');
+  Route::post('{rateId}/type/{typeId}/item/update/{itemId}', 'RateTemplateController@updateItem');
+  Route::post('{rateId}/type/{typeId}/item/delete/{itemId}', 'RateTemplateController@deleteItem');
 
 });
 
