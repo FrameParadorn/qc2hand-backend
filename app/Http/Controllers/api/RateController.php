@@ -12,6 +12,62 @@ use App\Vote;
 class RateController extends Controller
 {
 
+  private $models;
+  private $templates;
+  private $templateItems;
+
+  public function findTemplate($findId, $resultItem) {
+    foreach($this->templates AS $templateIndex => $template) {
+      if($template->rate_template_item_id === $findId) {
+        $this->findTemplateItem($template->id, $resultItem);
+      }
+    }
+  }
+
+  public function findTemplateItem($findId, $resultItem) {
+    $i = sizeof($resultItem["text"]) + 1;
+    foreach($this->templateItems AS $templateItemIndex => $templateItem) {
+      if($templateItem->rate_template_id === $findId) {
+        $resultItem["text"][$i] = $templateItem->name;
+        if(empty($templateItem->price)){
+          $this->findTemplate($templateItem->id,  $resultItem);
+        }else {
+          $results[] = $resultItem;
+        }
+      }
+    }
+  }
+
+
+  public function getModelAllForDropdown(Request $req) {
+
+      $results = [];
+
+      $this->models = ModelType::all();
+      $this->templates = RateTemplate::all();
+      $this->templateItems = RateTemplateItem::all();
+
+
+      foreach($this->models AS $modelIndex => $model) {
+        $resultItem = [
+          "id" => null,
+          "text" => [$model->name]
+        ];
+
+        foreach($this->templates AS $templateIndex => $template) {
+          if($model->id === $template->model_type_id) {
+            $this->findTemplateItem($template->id, $resultItem);
+          }
+        }
+      }
+
+      dd($results);
+
+
+
+  }
+
+
 
   public function getModelAll(Request $req){
 

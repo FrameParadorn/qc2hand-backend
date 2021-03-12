@@ -18,6 +18,8 @@ header( 'Access-Control-Allow-Headers: Authorization, Content-Type' );
 
 Route::prefix("/rate")->group(function(){
 
+  Route::get("/model/dropdown", 'api\RateController@getModelAllForDropdown');
+  
   Route::get('/model/{id?}', 'api\RateController@getModelAll');
   Route::get("/type/{modelId}/{itemId?}", 'api\RateController@getTypeAll');
 
