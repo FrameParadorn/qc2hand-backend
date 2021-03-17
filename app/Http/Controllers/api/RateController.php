@@ -12,9 +12,11 @@ use App\Vote;
 class RateController extends Controller
 {
 
+  private $results;
   private $models;
   private $templates;
   private $templateItems;
+
 
   public function findTemplate($findId, $resultItem) {
     foreach($this->templates AS $templateIndex => $template) {
@@ -25,14 +27,17 @@ class RateController extends Controller
   }
 
   public function findTemplateItem($findId, $resultItem) {
-    $i = sizeof($resultItem["text"]) + 1;
     foreach($this->templateItems AS $templateItemIndex => $templateItem) {
       if($templateItem->rate_template_id === $findId) {
-        $resultItem["text"][$i] = $templateItem->name;
+        $resultItem["id"] = $templateItem->id;
+        $resultItem["text"] .= " " . str_replace(["  ", "\n", "\r", '<br>'], '', $templateItem->name);
+        unset($this->templateItems[$templateItemIndex]);
         if(empty($templateItem->price)){
           $this->findTemplate($templateItem->id,  $resultItem);
         }else {
-          $results[] = $resultItem;
+          $resultItem["price"] = $templateItem->price; 
+          $resultItem["spec"] = $templateItem->name;
+          $this->results[] = $resultItem;
         }
       }
     }
@@ -41,7 +46,7 @@ class RateController extends Controller
 
   public function getModelAllForDropdown(Request $req) {
 
-      $results = [];
+      $this->results = [];
 
       $this->models = ModelType::all();
       $this->templates = RateTemplate::all();
@@ -51,7 +56,10 @@ class RateController extends Controller
       foreach($this->models AS $modelIndex => $model) {
         $resultItem = [
           "id" => null,
-          "text" => [$model->name]
+          "model_id" => $model->id,
+          "text" => $model->name,
+          "price" => 0,
+          "spec" => ""
         ];
 
         foreach($this->templates AS $templateIndex => $template) {
@@ -61,7 +69,8 @@ class RateController extends Controller
         }
       }
 
-      dd($results);
+
+      return response()->json($this->results);
 
 
 
