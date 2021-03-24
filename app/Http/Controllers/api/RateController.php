@@ -8,6 +8,7 @@ use App\ModelType;
 use App\RateTemplate;
 use App\RateTemplateItem;
 use App\Vote;
+use Illuminate\Support\Facades\DB;
 
 class RateController extends Controller
 {
@@ -30,7 +31,7 @@ class RateController extends Controller
     foreach($this->templateItems AS $templateItemIndex => $templateItem) {
       if($templateItem->rate_template_id === $findId) {
         $resultItem["id"] = $templateItem->id;
-        $resultItem["text"] .= " " . str_replace(["  ", "\n", "\r", '<br>'], '', $templateItem->name);
+        $resultItem["text"] .= $templateItem->label;
         unset($this->templateItems[$templateItemIndex]);
         if(empty($templateItem->price)){
           $this->findTemplate($templateItem->id,  $resultItem);
@@ -44,37 +45,37 @@ class RateController extends Controller
   }
 
 
-  public function getModelAllForDropdown(Request $req) {
-
-      $this->results = [];
-
-      $this->models = ModelType::all();
-      $this->templates = RateTemplate::all();
-      $this->templateItems = RateTemplateItem::all();
-
-
-      foreach($this->models AS $modelIndex => $model) {
-        $resultItem = [
-          "id" => null,
-          "model_id" => $model->id,
-          "text" => $model->name,
-          "price" => 0,
-          "spec" => ""
-        ];
-
-        foreach($this->templates AS $templateIndex => $template) {
-          if($model->id === $template->model_type_id) {
-            $this->findTemplateItem($template->id, $resultItem);
-          }
-        }
-      }
-
-
-      return response()->json($this->results);
-
-
-
-  }
+  // public function getModelAllForDropdown(Request $req) {
+  //
+  //     $this->results = [];
+  //
+  //     $this->models = ModelType::all();
+  //     $this->templates = RateTemplate::all();
+  //     $this->templateItems = RateTemplateItem::all();
+  //
+  //
+  //     foreach($this->models AS $modelIndex => $model) {
+  //       $resultItem = [
+  //         "id" => null,
+  //         "model_id" => $model->id,
+  //         "text" => "",
+  //         "price" => 0,
+  //         "spec" => ""
+  //       ];
+  //
+  //       foreach($this->templates AS $templateIndex => $template) {
+  //         if($model->id === $template->model_type_id) {
+  //           $this->findTemplateItem($template->id, $resultItem);
+  //         }
+  //       }
+  //     }
+  //
+  //
+  //     return response()->json($this->results);
+  //
+  //
+  //
+  // }
 
 
 
@@ -133,6 +134,21 @@ class RateController extends Controller
     $vote->item_id = $itemId;
     $vote->save();
 
+  }
+
+
+  public function getModelAllForDropdown() {
+    $sql = "SELECT 
+          rate_template_item.id,
+            rate_template.model_type_id AS model_id,
+            rate_template_item.price,
+            rate_template_item.label AS spec,
+            rate_template_item.label AS label
+        FROM rate_template_item 
+        LEFT JOIN rate_template ON rate_template.id = rate_template_item.rate_template_id
+        WHERE price IS NOT NULL";
+
+    return DB::select($sql);
   }
 
 

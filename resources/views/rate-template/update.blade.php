@@ -8,7 +8,16 @@
     </div>
 </div>
 
+
 <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        @foreach($breadcrumb AS $item)
+        <li class="breadcrumb-item"><a href="#">{{ $item }}</a></li>
+        @endforeach
+      </ol>
+    </nav>
+
     <div class="row">
         <div class="col-sm-12">
           <div class="white-box">
@@ -66,6 +75,7 @@
                                 <th>#</th>
                                 <th>Name</th>
                                 <th>Price</th>
+                                <th>Label</th>
                                 <th>Options</th>
                             </tr>
                         </thead>
@@ -75,6 +85,7 @@
                                 <td>{{ $key + 1 }}</td>
                                 <td class="item-subtype-name">{{ $item->name }}</td>
                                 <td class="item-subtype-price">{{ empty($item->price) ? "N/A" : $item->price }}</td>
+                                <td class="item-subtype-label">{{ $item->label }}</td>
                                 <td style="width: 300px">
                                   <button 
                                     class="btn btn-warning btn-sm update-subtype-btn" 
@@ -88,7 +99,8 @@
                                   >
                                    ลบ
                                   </button>
-                                  <a href="/rate-template/{{ $rateId }}/create/{{ $type->id }}/{{ $item->id }}">
+                                  <a 
+                                    href="/rate-template/{{ $rateId }}/create/{{ $type->id }}/{{ $item->id }}?breadcrumb={{ app('request')->input('breadcrumb') . ",". $item->name }}">
                                     <button class="btn btn-danger btn-sm">
                                       ประเภทย่อย
                                     </button>
@@ -125,6 +137,10 @@
             <label>ราคา</label>
             <input type="text" id="subtype-price" name="price" class="form-control"  placeholder="50,000 - 65,000">
           </div>
+          <div class="form-group">
+            <label>ป้าย</label>
+            <input type="text" id="subtype-label" name="label" class="form-control"  placeholder="Macbook Pro 2021 M1 RAM 16GB">
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -149,6 +165,7 @@
   $(".update-subtype-btn").on("click", function() {
     let name = $(this).parent().parent().find(".item-subtype-name").text();
     let price = $(this).parent().parent().find(".item-subtype-price").text();
+    let label = $(this).parent().parent().find(".item-subtype-label").text();
     let id = $(this).attr("data-id");
 
     $("#subtype-name").val(name)

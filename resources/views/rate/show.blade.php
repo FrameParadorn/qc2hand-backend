@@ -25,7 +25,7 @@
         <div class="col-sm-6">
             <div class="white-box">
                 <h3 class="box-title">จัดการตัวเลือก</h3>
-                <a href="/rate-template/{{ $type->id }}/create">
+                <a href="/rate-template/{{ $type->id }}/create?breadcrumb={{ $type->name }}">
                   <button class="btn btn-danger btn-sm" >ปรับแต่งรายการตัวเลือก</button>
                 </a>
                 <div class="clearfix"></div>

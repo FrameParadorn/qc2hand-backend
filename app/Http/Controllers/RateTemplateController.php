@@ -28,7 +28,7 @@ class RateTemplateController extends Controller
 
       $rateTemplate = RateTemplate::where("rate_template_item_id", $req->subId)->first();
       if($rateTemplate !== null) {
-        return redirect("/rate-template/" . $req->rateId. "/edit/" . $rateTemplate->id);
+        return redirect("/rate-template/" . $req->rateId. "/edit/" . $rateTemplate->id . "?breadcrumb=" . $req->breadcrumb);
       }
 
       $args = [
@@ -81,10 +81,12 @@ class RateTemplateController extends Controller
       try {
         $name = $req->name;
         $price = $req->price;
+        $label = $req->label;
         
         $rateTemplateItem = new RateTemplateItem;
         $rateTemplateItem->name = $name;
         $rateTemplateItem->price = $price;
+        $rateTemplateItem->label = $label;
         $rateTemplateItem->rate_template_id = $typeId;
         $rateTemplateItem->save();
         return redirect("/rate-template/$rateId/edit/$typeId");
@@ -100,10 +102,12 @@ class RateTemplateController extends Controller
       try {
         $name = $req->name;
         $price = $req->price;
+        $label = $req->label;
         
         $rateTemplateItem = RateTemplateItem::find($itemId);
         $rateTemplateItem->name = $name;
         $rateTemplateItem->price = $price;
+        $rateTemplateItem->label = $label;
         $rateTemplateItem->save();
         
         return redirect("/rate-template/$rateId/edit/$typeId");
@@ -129,8 +133,14 @@ class RateTemplateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($rateId, $typeId)
+    public function edit(Request $req, $rateId, $typeId)
     {
+
+      $breadcrumb = [];
+
+      if(!empty($req->breadcrumb)) {
+        $breadcrumb = explode(",", $req->breadcrumb);
+      }
 
       $type = RateTemplate::find($typeId);
       $items = RateTemplateItem::where("rate_template_id", "=", $typeId)->get();
@@ -138,7 +148,8 @@ class RateTemplateController extends Controller
       $args = [
         "rateId" => $rateId,
         "type" => $type,
-        "items" => $items
+        "items" => $items,
+        "breadcrumb" => $breadcrumb
       ];
 
       return view("rate-template.update", $args);
@@ -179,4 +190,6 @@ class RateTemplateController extends Controller
     {
         //
     }
+
+
 }
