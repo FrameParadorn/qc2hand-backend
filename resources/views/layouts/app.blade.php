@@ -76,8 +76,17 @@
                     {{--     <a href="/dashboard" class="waves-effect"><i class="fa fa-clock-o fa-fw" aria-hidden="true"></i>Dashboard</a> --}}
                     {{-- </li> --}}
 
-                    <li style="padding: 70px 0 0;">
-                        <a href="/rate" class="waves-effect"><i class="fa fa-list-alt fa-fw" aria-hidden="true"></i>Rate Management</a>
+                    <li style="padding: 70px 0 0 0;">
+                        <a href="/rate" class="waves-effect">
+                          <i class="fa fa-list-alt fa-fw" aria-hidden="true"></i>
+                          Rate Management
+                        </a>
+                    </li>
+                    <li style="">
+                        <a href="/blog" class="waves-effect">
+                          <i class="fa fa-rss-square fa-fw" aria-hidden="true"></i>
+                          Blog 
+                        </a>
                     </li>
                     <li>
                       <a class="dropdown-item" href="{{ route('logout') }}"
@@ -139,7 +148,7 @@
     <!-- Sparkline chart JavaScript -->
     <script src="/plugins/bower_components/jquery-sparkline/jquery.sparkline.min.js"></script>
     <!-- Custom Theme JavaScript -->
-    <script src="/js/custom.min.js"></script>
+    <script src="/js/custom.js"></script>
     <script src="/js/dashboard1.js"></script>
     <script src="/plugins/bower_components/toast-master/js/jquery.toast.js"></script>
 

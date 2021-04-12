@@ -147,3 +147,79 @@
          $(".navbar-toggle i").toggleClass("ti-menu").addClass("ti-close");
      });
  });
+
+
+const config = {
+  toolbar: [
+    [ 'Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink' ],
+    [ 'Underline','Strike','Subscript','Superscript','-','RemoveFormat' ],
+    [ 'FontSize', 'TextColor', 'BGColor' ],
+    [ 'Cut','Copy','Paste','PasteText','PasteFromWord','-','Undo','Redo' ],
+    [ 'Find','Replace','-','SelectAll','-','SpellChecker', 'Scayt' ],
+    [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField' ],
+    [
+      'NumberedList','BulletedList','-','Outdent','Indent','-','Blockquote','CreateDiv',
+      '-','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','-','BidiLtr','BidiRtl'
+    ],
+    [ 'Link','Unlink','Anchor' ],
+    [ 'Flash','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe' ],
+    [ 'Styles','Format','Font','FontSize' ],
+    [ 'TextColor','BGColor' ],
+    [ 'Maximize', 'ShowBlocks','-','About' ]
+  ],
+  allowedContent: true,
+  height: '500px'
+}
+
+CKEDITOR.replace( 'editor_web', config );
+CKEDITOR.replace( 'editor_mobile', config );
+
+$(".btn-save").on("click", function() {
+
+  var dataWeb = CKEDITOR.instances.editor_web.getData();
+  $("#editor_web").html(dataWeb)
+
+  var dataMobile = CKEDITOR.instances.editor_mobile.getData();
+  $("#editor_mobile").html(dataMobile)
+
+  
+  $(".form-blog").submit()
+
+})
+
+let ckInstant = null;
+
+$(".add-image").click(function() {
+  const ck = $(this).attr("ck") 
+  ckInstant = CKEDITOR.instances[`${ck}`]
+  $(".input-upload").trigger("click")
+})
+
+
+$.ajaxSetup({
+  headers: {
+    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+  }
+});
+
+$(".input-upload").change(function(e) {
+  var fd = new FormData();
+  var files = e.target.files[0];
+  fd.append('file', files);
+
+  $.ajax({
+      url: '/blog/upload',
+      type: 'post',
+      data: fd,
+      contentType: false,
+      processData: false,
+      success: function(response) {
+        if(response != 0){
+          ckInstant.insertHtml(`<img src="/storage/image/${response}" style="width: 200px">`);
+        } else {
+          alert('file not uploaded');
+        }
+      },
+  }); 
+})
+
